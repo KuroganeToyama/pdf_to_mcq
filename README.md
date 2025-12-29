@@ -39,6 +39,29 @@ uvicorn app.main:app --reload
 
 5. Access the app at `http://localhost:8000`
 
+## Docker Deployment
+
+1. Build the Docker image:
+```bash
+docker build -t pdf-to-mcq .
+```
+
+2. Run the container:
+```bash
+docker run -p 8000:8000 --env-file .env pdf-to-mcq
+```
+
+Or use Docker Compose (recommended):
+
+```bash
+docker-compose up -d
+```
+
+To stop:
+```bash
+docker-compose down
+```
+
 ## Project Structure
 
 ```
