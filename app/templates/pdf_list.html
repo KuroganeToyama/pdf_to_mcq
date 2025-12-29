@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}My PDFs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My PDFs</h1>
+    <button class="btn btn-primary" onclick="showUploadModal()">Upload PDF</button>
+</div>
+
+{% if pdfs %}
+<div class="pdf-grid">
+    {% for pdf in pdfs %}
+    <div class="pdf-card" data-pdf-id="{{ pdf.id }}">
+        <div class="pdf-card-header">
+            <h3 class="pdf-title">{{ pdf.title }}</h3>
+            <div class="pdf-actions">
+                <button class="btn-icon" onclick="editPdfTitle('{{ pdf.id }}', '{{ pdf.title }}')" title="Edit title">
+                    ✏️
+                </button>
+                <button class="btn-icon" onclick="deletePdf('{{ pdf.id }}')" title="Delete">
+                    🗑️
+                </button>
+            </div>
+        </div>
+        <div class="pdf-card-body">
+            <p class="pdf-date">Uploaded {{ pdf.created_at[:10] }}</p>
+            <div class="pdf-card-actions">
+                <a href="/pdfs/{{ pdf.id }}" class="btn btn-secondary btn-sm">View PDF</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No PDFs uploaded yet. Click "Upload PDF" to get started.</p>
+</div>
+{% endif %}
+
+<!-- Upload Modal -->
+<div id="uploadModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Upload PDF</h2>
+            <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+        </div>
+        <form id="uploadForm" enctype="multipart/form-data" onsubmit="handleUpload(event)">
+            <div class="form-group">
+                <label for="title">Display Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="file">PDF File</label>
+                <input type="file" id="file" name="file" accept=".pdf" required>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Title Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit PDF Title</h2>
+            <button class="modal-close" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form id="editForm" onsubmit="handleEditTitle(event)">
+            <input type="hidden" id="editPdfId" name="pdf_id">
+            <div class="form-group">
+                <label for="editTitle">Title</label>
+                <input type="text" id="editTitle" name="title" required>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div id="loadingModal" class="modal">
+    <div class="modal-content loading-modal">
+        <div class="loading-spinner"></div>
+        <p id="loadingMessage">Uploading PDF...</p>
+    </div>
+</div>
+{% endblock %}

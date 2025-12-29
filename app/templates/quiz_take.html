@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz - {{ pdf.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/pdfs/{{ pdf.id }}" class="back-link">← Back to PDF</a>
+        <h1>Quiz: {{ pdf.title }}</h1>
+        <p class="subtitle">{{ mcqs|length }} questions</p>
+    </div>
+</div>
+
+<form id="quizForm" action="/api/quiz/submit" method="post" class="quiz-form">
+    <input type="hidden" name="mcq_set_id" value="{{ mcq_set.id }}">
+    
+    {% for mcq in mcqs %}
+    <div class="quiz-question">
+        <div class="question-header">
+            <span class="question-number">Question {{ mcq.idx + 1 }}</span>
+            {% if mcq.difficulty %}
+            <span class="difficulty-badge difficulty-{{ mcq.difficulty }}">{{ mcq.difficulty }}</span>
+            {% endif %}
+        </div>
+        
+        <p class="question-text">{{ mcq.question }}</p>
+        
+        <div class="choices">
+            <label class="choice">
+                <input type="radio" name="answer_{{ mcq.id }}" value="A" required>
+                <span class="choice-label">A</span>
+                <span class="choice-text">{{ mcq.choice_a }}</span>
+            </label>
+            
+            <label class="choice">
+                <input type="radio" name="answer_{{ mcq.id }}" value="B" required>
+                <span class="choice-label">B</span>
+                <span class="choice-text">{{ mcq.choice_b }}</span>
+            </label>
+            
+            <label class="choice">
+                <input type="radio" name="answer_{{ mcq.id }}" value="C" required>
+                <span class="choice-label">C</span>
+                <span class="choice-text">{{ mcq.choice_c }}</span>
+            </label>
+            
+            <label class="choice">
+                <input type="radio" name="answer_{{ mcq.id }}" value="D" required>
+                <span class="choice-label">D</span>
+                <span class="choice-text">{{ mcq.choice_d }}</span>
+            </label>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <div class="quiz-footer">
+        <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+    </div>
+</form>
+{% endblock %}

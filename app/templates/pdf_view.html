@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pdf.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/pdfs" class="back-link">← Back to PDFs</a>
+        <h1>{{ pdf.title }}</h1>
+    </div>
+</div>
+
+<div class="pdf-view-container">
+    <div class="pdf-viewer">
+        <iframe src="{{ pdf_url }}" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+    
+    <div class="pdf-sidebar">
+        <div class="card">
+            <h3>Generate MCQs</h3>
+            
+            {% if latest_mcq_set %}
+            <div class="mcq-status">
+                <p><strong>Status:</strong> <span class="status-badge status-{{ latest_mcq_set.status }}">{{ latest_mcq_set.status }}</span></p>
+                <p><strong>Questions:</strong> {{ latest_mcq_set.requested_count }}</p>
+                <p><strong>Created:</strong> {{ latest_mcq_set.created_at[:10] }}</p>
+            </div>
+            
+            {% if latest_mcq_set.status == 'done' %}
+            <a href="/pdfs/{{ pdf.id }}/quiz" class="btn btn-primary btn-full">Take MCQs</a>
+            {% elif latest_mcq_set.status == 'failed' %}
+            <div class="alert alert-error">
+                Generation failed: {{ latest_mcq_set.error or 'Unknown error' }}
+            </div>
+            {% elif latest_mcq_set.status in ['queued', 'running'] %}
+            <div class="alert alert-info" id="generationStatus">
+                <span class="spinner"></span> Generating MCQs...
+            </div>
+            {% endif %}
+            {% endif %}
+            
+            <form id="generateForm" onsubmit="handleGenerate(event, '{{ pdf.id }}')" class="generate-form">
+                <div class="form-group">
+                    <label for="requested_count">Number of Questions</label>
+                    <input type="number" id="requested_count" name="requested_count" min="1" max="200" value="10" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full" id="generateBtn" 
+                    {% if latest_mcq_set and latest_mcq_set.status in ['queued', 'running'] %}disabled{% endif %}>
+                    Generate MCQs
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const pdfId = '{{ pdf.id }}';
+const latestMcqSetId = '{{ latest_mcq_set.id if latest_mcq_set else "" }}';
+const latestMcqSetStatus = '{{ latest_mcq_set.status if latest_mcq_set else "" }}';
+
+// Poll for status updates if generation is in progress
+if (latestMcqSetStatus === 'queued' || latestMcqSetStatus === 'running') {
+    pollGenerationStatus(latestMcqSetId);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/pdfs/{{ pdf.id }}" class="back-link">← Back to PDF</a>
+        <h1>Quiz Results</h1>
+    </div>
+</div>
+
+<div class="results-summary">
+    <div class="score-card">
+        <div class="score-circle">
+            <div class="score-value">{{ results.score_percentage }}%</div>
+        </div>
+        <div class="score-details">
+            <p class="score-fraction">{{ results.correct_count }} / {{ results.total_questions }}</p>
+            <p class="score-label">Correct Answers</p>
+        </div>
+    </div>
+</div>
+
+<div class="results-list">
+    {% for result in results.results %}
+    <div class="result-item {% if result.is_correct %}result-correct{% else %}result-incorrect{% endif %}">
+        <div class="result-header">
+            <span class="question-number">Question {{ result.idx + 1 }}</span>
+            <span class="result-badge">
+                {% if result.is_correct %}✓ Correct{% else %}✗ Incorrect{% endif %}
+            </span>
+        </div>
+        
+        <p class="question-text">{{ result.question }}</p>
+        
+        <div class="result-choices">
+            <div class="choice-result {% if result.correct_answer == 'A' %}choice-correct{% endif %} {% if result.user_answer == 'A' and not result.is_correct %}choice-wrong{% endif %}">
+                <span class="choice-label">A</span>
+                <span class="choice-text">{{ result.choice_a }}</span>
+                {% if result.correct_answer == 'A' %}
+                <span class="choice-indicator">✓ Correct</span>
+                {% elif result.user_answer == 'A' %}
+                <span class="choice-indicator">✗ Your answer</span>
+                {% endif %}
+            </div>
+            
+            <div class="choice-result {% if result.correct_answer == 'B' %}choice-correct{% endif %} {% if result.user_answer == 'B' and not result.is_correct %}choice-wrong{% endif %}">
+                <span class="choice-label">B</span>
+                <span class="choice-text">{{ result.choice_b }}</span>
+                {% if result.correct_answer == 'B' %}
+                <span class="choice-indicator">✓ Correct</span>
+                {% elif result.user_answer == 'B' %}
+                <span class="choice-indicator">✗ Your answer</span>
+                {% endif %}
+            </div>
+            
+            <div class="choice-result {% if result.correct_answer == 'C' %}choice-correct{% endif %} {% if result.user_answer == 'C' and not result.is_correct %}choice-wrong{% endif %}">
+                <span class="choice-label">C</span>
+                <span class="choice-text">{{ result.choice_c }}</span>
+                {% if result.correct_answer == 'C' %}
+                <span class="choice-indicator">✓ Correct</span>
+                {% elif result.user_answer == 'C' %}
+                <span class="choice-indicator">✗ Your answer</span>
+                {% endif %}
+            </div>
+            
+            <div class="choice-result {% if result.correct_answer == 'D' %}choice-correct{% endif %} {% if result.user_answer == 'D' and not result.is_correct %}choice-wrong{% endif %}">
+                <span class="choice-label">D</span>
+                <span class="choice-text">{{ result.choice_d }}</span>
+                {% if result.correct_answer == 'D' %}
+                <span class="choice-indicator">✓ Correct</span>
+                {% elif result.user_answer == 'D' %}
+                <span class="choice-indicator">✗ Your answer</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if result.explanation %}
+        <div class="explanation">
+            <strong>Explanation:</strong>
+            <p>{{ result.explanation }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="results-actions">
+    <a href="/pdfs/{{ pdf.id }}/quiz" class="btn btn-primary">Retake Quiz</a>
+    <a href="/pdfs/{{ pdf.id }}" class="btn btn-secondary">Back to PDF</a>
+</div>
+{% endblock %}
