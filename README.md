@@ -82,7 +82,7 @@ app/
   mcq/              - MCQ generation module
     router.py       - MCQ routes
     service.py      - MCQ service
-    pipeline/       - (To be implemented)
+    pipeline/       - LLM pipeline to ingest documents and generate MCQs 
   
   quiz/             - Quiz module
     router.py       - Quiz routes
